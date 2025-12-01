@@ -15,4 +15,4 @@ def generate_sine_lookup(samples=256, amplitude=1.0):
 # Example usage:
 lookup = generate_sine_lookup(16, 1.0)
 for i, v in enumerate(lookup):
-    print(f"{i}: {v:.4f}")
+    print()
