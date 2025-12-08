@@ -62,14 +62,34 @@ static void MX_DAC_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define BUF_SIZE 100
-	uint32_t adc_buffer[BUF_SIZE];
-	uint8_t index = 0;
+#define BUF_SIZE 64
+uint16_t adc_buffer[BUF_SIZE];
+
+float fir_coeffs[BUF_SIZE] = {-0.001, -0.001, -0.001, -0.001, -0.001, -0.002, -0.002, -0.002, -0.002, -0.002, -0.002, -0.001, -0.000, 0.001, 0.002, 0.004, 0.006, 0.009, 0.012, 0.015, 0.019, 0.023, 0.027, 0.031, 0.035, 0.039, 0.042, 0.046, 0.048, 0.050, 0.052, 0.052, 0.052, 0.052, 0.050, 0.048, 0.046, 0.042, 0.039, 0.035, 0.031, 0.027, 0.023, 0.019, 0.015, 0.012, 0.009, 0.006, 0.004, 0.002, 0.001, -0.000, -0.001, -0.002, -0.002, -0.002, -0.002, -0.002, -0.002, -0.001, -0.001, -0.001, -0.001, -0.001};
+
+
+uint32_t index = 0;
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	uint32_t adc_value = HAL_ADC_GetValue(hadc);
-	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, adc_value);
-	adc_buffer[index] = adc_value;
+	uint32_t val = HAL_ADC_GetValue(hadc);
+	adc_buffer[index] = val;
+	float filtered = 0.0f;
+
+	for(uint32_t i=0; i < BUF_SIZE; i++) {
+		float a = adc_buffer[(BUF_SIZE + index - i) % BUF_SIZE];
+		filtered += a* fir_coeffs[i];
+	}
+
+	if (filtered < 0) {
+		filtered = 0;
+	}
+
+	else if (filtered > 4095) {
+		filtered = 4095;
+	}
+
+	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, filtered);
+
 	index++;
 	if (index == BUF_SIZE)
 	{
