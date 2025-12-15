@@ -62,39 +62,64 @@ static void MX_DAC_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define BUF_SIZE 64
-uint16_t adc_buffer[BUF_SIZE];
+#define IIR_ORDER 2 //!!! change order
 
-float fir_coeffs[BUF_SIZE] = {-0.001, -0.001, -0.001, -0.001, -0.001, -0.002, -0.002, -0.002, -0.002, -0.002, -0.002, -0.001, -0.000, 0.001, 0.002, 0.004, 0.006, 0.009, 0.012, 0.015, 0.019, 0.023, 0.027, 0.031, 0.035, 0.039, 0.042, 0.046, 0.048, 0.050, 0.052, 0.052, 0.052, 0.052, 0.050, 0.048, 0.046, 0.042, 0.039, 0.035, 0.031, 0.027, 0.023, 0.019, 0.015, 0.012, 0.009, 0.006, 0.004, 0.002, 0.001, -0.000, -0.001, -0.002, -0.002, -0.002, -0.002, -0.002, -0.002, -0.001, -0.001, -0.001, -0.001, -0.001};
+//float aCoeffs[] = {1.000000f, -2.748836f, 2.528231f, -0.777639f}; //LPF 1khz
+//float bCoeffs[] = {0.000220f, 0.000659f, 0.000659f, 0.000220f}; //LPF 1kHz
 
+float aCoeffs[] = {1.000000f, -1.812821f, 0.827272f}; //Bandpass 500Hz-2kHz
+float bCoeffs[] = {0.086364f, 0.000000f, -0.086364}; //Bandpass 500Hz-2kHz
+
+float x_old[IIR_ORDER + 1] = {}; // Buffer for old output values
+float y_old[IIR_ORDER + 1] = {}; // Buffer for old input values
+
+
+float IIR_Process(float input)
+{
+	// Shift input history
+	for (int i = IIR_ORDER; i > 0; i--)
+	{
+		x_old[i] = x_old[i - 1];
+		y_old[i] = y_old[i - 1];
+	}
+
+	x_old[0] = input;
+
+	// Define output
+	float y = 0.0f;
+
+	// Feedforward (b coefficients)
+	for (int i = 0; i <= IIR_ORDER; i++) {
+		y += bCoeffs[i] * x_old[i];
+	}
+
+	// Feedback (a coefficients, skip a[0])
+	for (int i = 1; i <= IIR_ORDER; i++) {
+		y -= aCoeffs[i] * y_old[i];
+	}
+
+	y_old[0] = y;
+
+	return y;
+}
 
 uint32_t index = 0;
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	uint32_t val = HAL_ADC_GetValue(hadc);
-	adc_buffer[index] = val;
-	float filtered = 0.0f;
+	uint32_t adc_val = HAL_ADC_GetValue(hadc);
 
-	for(uint32_t i=0; i < BUF_SIZE; i++) {
-		float a = adc_buffer[(BUF_SIZE + index - i) % BUF_SIZE];
-		filtered += a* fir_coeffs[i];
-	}
+	// Convert ADC to float
+	float float_adc_val = (float)adc_val;
 
-	if (filtered < 0) {
-		filtered = 0;
-	}
+	float filtered = IIR_Process(float_adc_val-2048)+2048; //
 
-	else if (filtered > 4095) {
-		filtered = 4095;
-	}
+	if (filtered < 0.0f)
+		filtered = 0.0f;
+	else if (filtered > 4095.0f)
+		filtered = 4095.0f;
 
-	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, filtered);
+	HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, (uint32_t)filtered);
 
-	index++;
-	if (index == BUF_SIZE)
-	{
-		index = 0;
-	}
 }
 /* USER CODE END 0 */
 
