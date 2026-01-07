@@ -206,11 +206,9 @@ uint32_t index = 0;
 int32_t adc_val = 0;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
 	if (htim == &htim2) {
-		float c = amp_scaler * ((float) sineLookupTable[index] - 2048.0f);
-		float m = (float) adc_val / 2048.0f - 1.0f;
-		float s = m * c;
-		HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, s + 2048.0f);
-		index += step;
+		float m = (float) adc_val / 2048.0f;
+		HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, amp_scaler * sineLookupTable[index]);
+		index += step + ( m* 50);
 		if (index >= 1024) {
 			index = 0;
 		}
@@ -257,10 +255,11 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
-  HAL_TIM_Base_Start_IT(&htim2);
+  ddsSet(5000, 1);
   HAL_ADC_Start_IT(&hadc1);
   HAL_TIM_Base_Start(&htim3);
-  ddsSet(5000, 1);
+  HAL_TIM_Base_Start_IT(&htim2);
+
 
   /* USER CODE END 2 */
 

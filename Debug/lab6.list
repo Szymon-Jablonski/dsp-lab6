@@ -29,25 +29,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  12 .ARM.attributes 00000030  00000000  00000000  00006014  2**0
                   CONTENTS, READONLY
- 13 .debug_info   0000bc4f  00000000  00000000  00006044  2**0
+ 13 .debug_info   0000bc3b  00000000  00000000  00006044  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 00001cbd  00000000  00000000  00011c93  2**0
+ 14 .debug_abbrev 00001cbb  00000000  00000000  00011c7f  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_aranges 00000bf0  00000000  00000000  00013950  2**3
+ 15 .debug_aranges 00000bf0  00000000  00000000  00013940  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_rnglists 00000939  00000000  00000000  00014540  2**0
+ 16 .debug_rnglists 00000939  00000000  00000000  00014530  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_macro  00021880  00000000  00000000  00014e79  2**0
+ 17 .debug_macro  00021880  00000000  00000000  00014e69  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   0000d670  00000000  00000000  000366f9  2**0
+ 18 .debug_line   0000d66c  00000000  00000000  000366e9  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000d3871  00000000  00000000  00043d69  2**0
+ 19 .debug_str    000d3871  00000000  00000000  00043d55  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .comment      00000043  00000000  00000000  001175da  2**0
+ 20 .comment      00000043  00000000  00000000  001175c6  2**0
                   CONTENTS, READONLY
- 21 .debug_frame  00003330  00000000  00000000  00117620  2**2
+ 21 .debug_frame  00003330  00000000  00000000  0011760c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .debug_line_str 00000066  00000000  00000000  0011a950  2**0
+ 22 .debug_line_str 00000066  00000000  00000000  0011a93c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1098,84 +1098,82 @@ uint32_t index = 0;
 int32_t adc_val = 0;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
  8000d94:	b580      	push	{r7, lr}
- 8000d96:	b086      	sub	sp, #24
+ 8000d96:	b084      	sub	sp, #16
  8000d98:	af00      	add	r7, sp, #0
  8000d9a:	6078      	str	r0, [r7, #4]
 	if (htim == &htim2) {
  8000d9c:	687b      	ldr	r3, [r7, #4]
- 8000d9e:	4a28      	ldr	r2, [pc, #160]	@ (8000e40 <HAL_TIM_PeriodElapsedCallback+0xac>)
+ 8000d9e:	4a27      	ldr	r2, [pc, #156]	@ (8000e3c <HAL_TIM_PeriodElapsedCallback+0xa8>)
  8000da0:	4293      	cmp	r3, r2
- 8000da2:	d149      	bne.n	8000e38 <HAL_TIM_PeriodElapsedCallback+0xa4>
-		float c = amp_scaler * ((float) sineLookupTable[index] - 2048.0f);
- 8000da4:	4b27      	ldr	r3, [pc, #156]	@ (8000e44 <HAL_TIM_PeriodElapsedCallback+0xb0>)
+ 8000da2:	d146      	bne.n	8000e32 <HAL_TIM_PeriodElapsedCallback+0x9e>
+		float m = (float) adc_val / 2048.0f;
+ 8000da4:	4b26      	ldr	r3, [pc, #152]	@ (8000e40 <HAL_TIM_PeriodElapsedCallback+0xac>)
  8000da6:	681b      	ldr	r3, [r3, #0]
- 8000da8:	4a27      	ldr	r2, [pc, #156]	@ (8000e48 <HAL_TIM_PeriodElapsedCallback+0xb4>)
- 8000daa:	f832 3013 	ldrh.w	r3, [r2, r3, lsl #1]
- 8000dae:	ee07 3a90 	vmov	s15, r3
- 8000db2:	eef8 7a67 	vcvt.f32.u32	s15, s15
- 8000db6:	ed9f 7a25 	vldr	s14, [pc, #148]	@ 8000e4c <HAL_TIM_PeriodElapsedCallback+0xb8>
- 8000dba:	ee37 7ac7 	vsub.f32	s14, s15, s14
- 8000dbe:	4b24      	ldr	r3, [pc, #144]	@ (8000e50 <HAL_TIM_PeriodElapsedCallback+0xbc>)
- 8000dc0:	edd3 7a00 	vldr	s15, [r3]
- 8000dc4:	ee67 7a27 	vmul.f32	s15, s14, s15
- 8000dc8:	edc7 7a05 	vstr	s15, [r7, #20]
-		float m = (float) adc_val / 2048.0f - 1.0f;
- 8000dcc:	4b21      	ldr	r3, [pc, #132]	@ (8000e54 <HAL_TIM_PeriodElapsedCallback+0xc0>)
- 8000dce:	681b      	ldr	r3, [r3, #0]
- 8000dd0:	ee07 3a90 	vmov	s15, r3
- 8000dd4:	eeb8 7ae7 	vcvt.f32.s32	s14, s15
- 8000dd8:	eddf 6a1c 	vldr	s13, [pc, #112]	@ 8000e4c <HAL_TIM_PeriodElapsedCallback+0xb8>
- 8000ddc:	eec7 7a26 	vdiv.f32	s15, s14, s13
- 8000de0:	eeb7 7a00 	vmov.f32	s14, #112	@ 0x3f800000  1.0
- 8000de4:	ee77 7ac7 	vsub.f32	s15, s15, s14
- 8000de8:	edc7 7a04 	vstr	s15, [r7, #16]
-		float s = m * c;
- 8000dec:	ed97 7a04 	vldr	s14, [r7, #16]
- 8000df0:	edd7 7a05 	vldr	s15, [r7, #20]
- 8000df4:	ee67 7a27 	vmul.f32	s15, s14, s15
- 8000df8:	edc7 7a03 	vstr	s15, [r7, #12]
-		HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, s + 2048.0f);
- 8000dfc:	edd7 7a03 	vldr	s15, [r7, #12]
- 8000e00:	ed9f 7a12 	vldr	s14, [pc, #72]	@ 8000e4c <HAL_TIM_PeriodElapsedCallback+0xb8>
- 8000e04:	ee77 7a87 	vadd.f32	s15, s15, s14
- 8000e08:	eefc 7ae7 	vcvt.u32.f32	s15, s15
- 8000e0c:	ee17 3a90 	vmov	r3, s15
- 8000e10:	2200      	movs	r2, #0
- 8000e12:	2110      	movs	r1, #16
- 8000e14:	4810      	ldr	r0, [pc, #64]	@ (8000e58 <HAL_TIM_PeriodElapsedCallback+0xc4>)
- 8000e16:	f001 fb33 	bl	8002480 <HAL_DAC_SetValue>
-		index += step;
- 8000e1a:	4b0a      	ldr	r3, [pc, #40]	@ (8000e44 <HAL_TIM_PeriodElapsedCallback+0xb0>)
- 8000e1c:	681a      	ldr	r2, [r3, #0]
- 8000e1e:	4b0f      	ldr	r3, [pc, #60]	@ (8000e5c <HAL_TIM_PeriodElapsedCallback+0xc8>)
- 8000e20:	681b      	ldr	r3, [r3, #0]
- 8000e22:	4413      	add	r3, r2
- 8000e24:	4a07      	ldr	r2, [pc, #28]	@ (8000e44 <HAL_TIM_PeriodElapsedCallback+0xb0>)
- 8000e26:	6013      	str	r3, [r2, #0]
+ 8000da8:	ee07 3a90 	vmov	s15, r3
+ 8000dac:	eeb8 7ae7 	vcvt.f32.s32	s14, s15
+ 8000db0:	eddf 6a24 	vldr	s13, [pc, #144]	@ 8000e44 <HAL_TIM_PeriodElapsedCallback+0xb0>
+ 8000db4:	eec7 7a26 	vdiv.f32	s15, s14, s13
+ 8000db8:	edc7 7a03 	vstr	s15, [r7, #12]
+		HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, amp_scaler * sineLookupTable[index]);
+ 8000dbc:	4b22      	ldr	r3, [pc, #136]	@ (8000e48 <HAL_TIM_PeriodElapsedCallback+0xb4>)
+ 8000dbe:	681b      	ldr	r3, [r3, #0]
+ 8000dc0:	4a22      	ldr	r2, [pc, #136]	@ (8000e4c <HAL_TIM_PeriodElapsedCallback+0xb8>)
+ 8000dc2:	f832 3013 	ldrh.w	r3, [r2, r3, lsl #1]
+ 8000dc6:	ee07 3a90 	vmov	s15, r3
+ 8000dca:	eeb8 7ae7 	vcvt.f32.s32	s14, s15
+ 8000dce:	4b20      	ldr	r3, [pc, #128]	@ (8000e50 <HAL_TIM_PeriodElapsedCallback+0xbc>)
+ 8000dd0:	edd3 7a00 	vldr	s15, [r3]
+ 8000dd4:	ee67 7a27 	vmul.f32	s15, s14, s15
+ 8000dd8:	eefc 7ae7 	vcvt.u32.f32	s15, s15
+ 8000ddc:	ee17 3a90 	vmov	r3, s15
+ 8000de0:	2200      	movs	r2, #0
+ 8000de2:	2110      	movs	r1, #16
+ 8000de4:	481b      	ldr	r0, [pc, #108]	@ (8000e54 <HAL_TIM_PeriodElapsedCallback+0xc0>)
+ 8000de6:	f001 fb4b 	bl	8002480 <HAL_DAC_SetValue>
+		index += step + ( m* 50);
+ 8000dea:	4b17      	ldr	r3, [pc, #92]	@ (8000e48 <HAL_TIM_PeriodElapsedCallback+0xb4>)
+ 8000dec:	681b      	ldr	r3, [r3, #0]
+ 8000dee:	ee07 3a90 	vmov	s15, r3
+ 8000df2:	eeb8 7a67 	vcvt.f32.u32	s14, s15
+ 8000df6:	4b18      	ldr	r3, [pc, #96]	@ (8000e58 <HAL_TIM_PeriodElapsedCallback+0xc4>)
+ 8000df8:	681b      	ldr	r3, [r3, #0]
+ 8000dfa:	ee07 3a90 	vmov	s15, r3
+ 8000dfe:	eef8 6a67 	vcvt.f32.u32	s13, s15
+ 8000e02:	edd7 7a03 	vldr	s15, [r7, #12]
+ 8000e06:	ed9f 6a15 	vldr	s12, [pc, #84]	@ 8000e5c <HAL_TIM_PeriodElapsedCallback+0xc8>
+ 8000e0a:	ee67 7a86 	vmul.f32	s15, s15, s12
+ 8000e0e:	ee76 7aa7 	vadd.f32	s15, s13, s15
+ 8000e12:	ee77 7a27 	vadd.f32	s15, s14, s15
+ 8000e16:	eefc 7ae7 	vcvt.u32.f32	s15, s15
+ 8000e1a:	ee17 2a90 	vmov	r2, s15
+ 8000e1e:	4b0a      	ldr	r3, [pc, #40]	@ (8000e48 <HAL_TIM_PeriodElapsedCallback+0xb4>)
+ 8000e20:	601a      	str	r2, [r3, #0]
 		if (index >= 1024) {
- 8000e28:	4b06      	ldr	r3, [pc, #24]	@ (8000e44 <HAL_TIM_PeriodElapsedCallback+0xb0>)
- 8000e2a:	681b      	ldr	r3, [r3, #0]
- 8000e2c:	f5b3 6f80 	cmp.w	r3, #1024	@ 0x400
- 8000e30:	d302      	bcc.n	8000e38 <HAL_TIM_PeriodElapsedCallback+0xa4>
+ 8000e22:	4b09      	ldr	r3, [pc, #36]	@ (8000e48 <HAL_TIM_PeriodElapsedCallback+0xb4>)
+ 8000e24:	681b      	ldr	r3, [r3, #0]
+ 8000e26:	f5b3 6f80 	cmp.w	r3, #1024	@ 0x400
+ 8000e2a:	d302      	bcc.n	8000e32 <HAL_TIM_PeriodElapsedCallback+0x9e>
 			index = 0;
- 8000e32:	4b04      	ldr	r3, [pc, #16]	@ (8000e44 <HAL_TIM_PeriodElapsedCallback+0xb0>)
- 8000e34:	2200      	movs	r2, #0
- 8000e36:	601a      	str	r2, [r3, #0]
+ 8000e2c:	4b06      	ldr	r3, [pc, #24]	@ (8000e48 <HAL_TIM_PeriodElapsedCallback+0xb4>)
+ 8000e2e:	2200      	movs	r2, #0
+ 8000e30:	601a      	str	r2, [r3, #0]
 		}
 	}
 }
- 8000e38:	bf00      	nop
- 8000e3a:	3718      	adds	r7, #24
- 8000e3c:	46bd      	mov	sp, r7
- 8000e3e:	bd80      	pop	{r7, pc}
- 8000e40:	2000008c 	.word	0x2000008c
- 8000e44:	2000011c 	.word	0x2000011c
- 8000e48:	08003bdc 	.word	0x08003bdc
- 8000e4c:	45000000 	.word	0x45000000
+ 8000e32:	bf00      	nop
+ 8000e34:	3710      	adds	r7, #16
+ 8000e36:	46bd      	mov	sp, r7
+ 8000e38:	bd80      	pop	{r7, pc}
+ 8000e3a:	bf00      	nop
+ 8000e3c:	2000008c 	.word	0x2000008c
+ 8000e40:	20000120 	.word	0x20000120
+ 8000e44:	45000000 	.word	0x45000000
+ 8000e48:	2000011c 	.word	0x2000011c
+ 8000e4c:	08003bdc 	.word	0x08003bdc
  8000e50:	20000000 	.word	0x20000000
- 8000e54:	20000120 	.word	0x20000120
- 8000e58:	20000078 	.word	0x20000078
- 8000e5c:	20000004 	.word	0x20000004
+ 8000e54:	20000078 	.word	0x20000078
+ 8000e58:	20000004 	.word	0x20000004
+ 8000e5c:	42480000 	.word	0x42480000
 
 08000e60 <HAL_ADC_ConvCpltCallback>:
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
@@ -1241,19 +1239,19 @@ int main(void)
  8000ea4:	2110      	movs	r1, #16
  8000ea6:	480a      	ldr	r0, [pc, #40]	@ (8000ed0 <main+0x4c>)
  8000ea8:	f001 fa93 	bl	80023d2 <HAL_DAC_Start>
-  HAL_TIM_Base_Start_IT(&htim2);
- 8000eac:	4809      	ldr	r0, [pc, #36]	@ (8000ed4 <main+0x50>)
- 8000eae:	f002 fa3d 	bl	800332c <HAL_TIM_Base_Start_IT>
-  HAL_ADC_Start_IT(&hadc1);
- 8000eb2:	4809      	ldr	r0, [pc, #36]	@ (8000ed8 <main+0x54>)
- 8000eb4:	f000 fd22 	bl	80018fc <HAL_ADC_Start_IT>
-  HAL_TIM_Base_Start(&htim3);
- 8000eb8:	4808      	ldr	r0, [pc, #32]	@ (8000edc <main+0x58>)
- 8000eba:	f002 f9cf 	bl	800325c <HAL_TIM_Base_Start>
   ddsSet(5000, 1);
- 8000ebe:	eef7 0a00 	vmov.f32	s1, #112	@ 0x3f800000  1.0
- 8000ec2:	ed9f 0a07 	vldr	s0, [pc, #28]	@ 8000ee0 <main+0x5c>
- 8000ec6:	f7ff ff33 	bl	8000d30 <ddsSet>
+ 8000eac:	eef7 0a00 	vmov.f32	s1, #112	@ 0x3f800000  1.0
+ 8000eb0:	ed9f 0a08 	vldr	s0, [pc, #32]	@ 8000ed4 <main+0x50>
+ 8000eb4:	f7ff ff3c 	bl	8000d30 <ddsSet>
+  HAL_ADC_Start_IT(&hadc1);
+ 8000eb8:	4807      	ldr	r0, [pc, #28]	@ (8000ed8 <main+0x54>)
+ 8000eba:	f000 fd1f 	bl	80018fc <HAL_ADC_Start_IT>
+  HAL_TIM_Base_Start(&htim3);
+ 8000ebe:	4807      	ldr	r0, [pc, #28]	@ (8000edc <main+0x58>)
+ 8000ec0:	f002 f9cc 	bl	800325c <HAL_TIM_Base_Start>
+  HAL_TIM_Base_Start_IT(&htim2);
+ 8000ec4:	4806      	ldr	r0, [pc, #24]	@ (8000ee0 <main+0x5c>)
+ 8000ec6:	f002 fa31 	bl	800332c <HAL_TIM_Base_Start_IT>
 
   /* USER CODE END 2 */
 
@@ -1264,10 +1262,10 @@ int main(void)
  8000ecc:	e7fd      	b.n	8000eca <main+0x46>
  8000ece:	bf00      	nop
  8000ed0:	20000078 	.word	0x20000078
- 8000ed4:	2000008c 	.word	0x2000008c
+ 8000ed4:	459c4000 	.word	0x459c4000
  8000ed8:	20000030 	.word	0x20000030
  8000edc:	200000d4 	.word	0x200000d4
- 8000ee0:	459c4000 	.word	0x459c4000
+ 8000ee0:	2000008c 	.word	0x2000008c
 
 08000ee4 <SystemClock_Config>:
 /**
